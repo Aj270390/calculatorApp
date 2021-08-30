@@ -1,0 +1,128 @@
+<HTML>
+<FORM name="mycalc">
+<input name="mydisp" type="Text" size=10 value="0" > <br>
+<input type="Button" value="7" onclick="digitKey(7)">
+<input type="Button" value="8" onclick="digitKey(8)">
+<input type="Button" value="9" onclick="digitKey(9)">
+<input type="Button" value="X" onclick="oprKey('X')"> <br>
+<input type="Button" value="4" onclick="digitKey(4)">
+<input type="Button" value="5" onclick="digitKey(5)">
+<input type="Button" value="6" onclick="digitKey(6)">
+<input type="Button" value="/" onclick="oprKey('/')"> <br>
+<input type="Button" value="1" onclick="digitKey(1)">
+<input type="Button" value="2" onclick="digitKey(2)">
+<input type="Button" value="3" onclick="digitKey(3)">
+<input type="Button" value="-" onclick="oprKey('-')"> <br>
+<input type="Button" value="0" onclick="digitKey(0)">
+<input type="Button" value="." onclick="appendKey()">
+<input type="Button" value="=" onclick="oprKey('=')">
+<input type="Button" value="+" onclick="oprKey('+')"> <br>
+<input type="Button" style="width:40px" value="Enter" onclick="Enter()">
+<input type="Button" class="btninput" id="infix" value="Infix" onclick="IsInfixRPN('Infix')">
+<input type="Button" class="btninput" id ="rpn" value="RPN" onclick="IsInfixRPN('RPN')">
+
+</FORM>
+<script language="javascript"> 
+function display(a) { document.forms['mycalc']['mydisp'].value=a; }
+var opr = ' ', ans = ' ', num = 0, currentmode = 'Infix';
+var count= 1;
+var isDecimal= false;
+var arr=[];
+function apply (a,op,n) {
+  switch (op) {
+      case "+": return a += n; 
+      case "-": return a -= n;
+      case "X": return a *= n;
+      case "/": return a /= n;
+    } 
+}
+function digitKey (key) {
+     if(isDecimal)
+     {
+       num = num + key/count; 
+       count*=10
+     }
+     else if(num != 0)
+     { 
+       num = num*10 + key; 
+       count=1;
+     }
+     else num = key;
+     display(num);
+    } 
+
+function Enter()
+{
+  arr.push(num);
+  display(num);
+  num = 0;
+  count = 1;
+  isDecimal = false;
+}
+function IsInfixRPN(infixorRPN)
+{
+  currentmode=infixorRPN;
+  num = 0;
+  display(num);
+  changecolor();
+}
+function changecolor(){
+   if(currentmode == 'RPN')
+     {
+	document.getElementById("rpn").style.backgroundColor = "green";
+	document.getElementById("infix").style.backgroundColor = "white";
+     }
+   else
+     {
+	document.getElementById("infix").style.backgroundColor = "green";
+	document.getElementById("rpn").style.backgroundColor = "white";
+     }
+}
+function appendKey() {
+     isDecimal = true;
+     count = 10;
+     display(num + '.');
+  } 
+function oprKey (key) {
+  if(currentmode == 'RPN'){
+      arr.push(num);
+      ans = apply(arr[arr.length-1],key,arr[arr.length-2]);
+      arr.pop();
+      arr.pop();
+      num = ans;
+      display(ans);
+   }
+  else {
+    if(opr ==' ') ans = num;
+    else ans = apply(ans,opr,num);
+    if(key =='=')
+    {
+     opr = ' ';
+     num = ans;
+    }
+    else 
+    { 
+     opr = key; 
+     num = 0;
+    }
+   display(ans);
+   count = 1;
+   isDecimal = false;
+ } 
+}
+window.onload = changecolor();
+</script>
+<style>
+   input {
+   height: 30px;
+   width: 29px;
+   padding: 5px 5px 5px 5px;
+  }
+  input[type=text] {
+    height: 15px; width: 128px; }
+  form { 
+    width: 132px;
+    border: solid #5B6DCD 10px; }
+ .btninput { width :40px }
+ </style>
+</HTML>
